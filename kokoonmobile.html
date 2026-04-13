@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFD93D">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Hotel Kokoon Mobile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f5f5f5;
+            --accent-yellow: #FFD93D;
+            --accent-pink: #FF6B9D;
+            --accent-cyan: #6BCB77;
+            --border-color: #000000;
+            --text-color: #000000;
+            --shadow-offset: 4px;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            line-height: 1.4;
+            overflow-x: hidden;
+            padding-bottom: calc(80px + var(--safe-bottom));
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Mobile-First Brutal Utilities */
+        .brutal-border {
+            border: 2.5px solid var(--border-color);
+        }
+
+        .brutal-shadow {
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--border-color);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .brutal-shadow:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px var(--border-color);
+        }
+
+        .bg-yellow { background-color: var(--accent-yellow); }
+        .bg-pink { background-color: var(--accent-pink); }
+        .bg-cyan { background-color: var(--accent-cyan); }
+
+        /* Fixed Mobile Header */
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--primary-bg);
+            border-bottom: 3px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            z-index: 1000;
+            padding-top: var(--safe-top);
+        }
+
+        .mobile-logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: var(--accent-yellow);
+            padding: 0.4rem 1rem;
+            border: 2.5px solid var(--border-color);
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+        }
+
+        .menu-toggle {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-cyan);
+            border: 2.5px solid var(--border-color);
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+        }
+
+        .menu-toggle span {
+            width: 20px;
+            height: 2.5px;
+            background: var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Navigation Drawer */
+        .mobile-nav {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: var(--accent-pink);
+            border-bottom: 3px solid var(--border-color);
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            padding: 1.5rem;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+        }
+
+        .mobile-nav.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--border-color);
+            border: 2.5px solid var(--border-color);
+            margin-bottom: 0.75rem;
+            background: white;
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .mobile-nav a:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px var(--border-color);
+        }
+
+        /* Main Content Padding for Fixed Header */
+        main {
+            margin-top: 60px;
+        }
+
+        /* Mobile Hero */
+        .mobile-hero {
+            background: repeating-linear-gradient(
+                45deg,
+                #ffffff,
+                #ffffff 15px,
+                #f0f0f0 15px,
+                #f0f0f0 30px
+            );
+            padding: 2rem 1rem;
+            border-bottom: 3px solid var(--border-color);
+        }
+
+        .hero-visual-mobile {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-image-mobile {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid var(--border-color);
+            box-shadow: 6px 6px 0px 0px var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            transform: rotate(-1deg);
+        }
+
+        .hero-badge-mobile {
+            position: absolute;
+            top: -10px;
+            right: -5px;
+            background: var(--accent-yellow);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-align: center;
+            line-height: 1.1;
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+            animation: spin 8s linear infinite;
+        }
+
+        .price-tag-mobile {
+            position: absolute;
+            bottom: -15px;
+            left: 10px;
+            background: var(--accent-pink);
+            padding: 0.75rem 1rem;
+            border: 3px solid var(--border-color);
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            transform: rotate(-3deg);
+        }
+
+        .hero-content-mobile h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero-word {
+            display: inline-block;
+            background: var(--accent-yellow);
+            padding: 0.25rem 0.75rem;
+            border: 3px solid var(--border-color);
+            margin: 0.15rem;
+            box-shadow: 4px 4px 0px 0px var(--border-color);
+            transform: rotate(-2deg);
+        }
+
+        .hero-word:nth-child(even) {
+            transform: rotate(2deg);
+            background: var(--accent-pink);
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-left: 4px solid var(--border-color);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            line-height: 1.5;
+        }
+
+        .hero-cta-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .cta-btn {
+            width: 100%;
+            padding: 1.1rem;
+            border: 3px solid var(--border-color);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px 0px var(--border-color);
+            -webkit-touch-callout: none;
+        }
+
+        .cta-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px 0px var(--border-color);
+        }
+
+        .cta-primary {
+            background: var(--border-color);
+            color: white;
+            box-shadow: 4px 4px 0px 0px var(--accent-cyan);
+        }
+
+        .cta-secondary {
+            background: white;
+            color: var(--border-color);
+            box-shadow: 4px 4px 0px 0px var(--accent-pink);
+        }
+
+        /* Section Headers */
+        .section-mobile {
+            padding: 3rem 1rem;
+            border-bottom: 3px solid var(--border-color);
+        }
+
+        .section-title-mobile {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            background: white;
+            padding: 0.75rem 1.25rem;
+            border: 3px solid var(--border-color);
+            box-shadow: 5px 5px 0px 0px var(--border-color);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            transform: rotate(-1deg);
+        }
+
+        /* Features Grid Mobile */
+        .features-mobile {
+            background: var(--accent-cyan);
+        }
+
+        .features-grid-mobile {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        .feature-card-mobile {
+            background: white;
+            border: 3px solid var(--border-color);
+            padding: 1.5rem;
+            box-shadow: 5px 5px 0px 0px var(--border-color);
+        }
+
+        .feature-icon-mobile {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            background: var(--accent-yellow);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2.5px solid var(--border-color);
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+        }
+
+        .feature-card-mobile h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .feature-card-mobile p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Rooms Mobile */
+        .rooms-mobile {
+            background: var(--secondary-bg);
+        }
+
+        .rooms-list-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .room-card-mobile {
+            background: white;
+            border: 3px solid var(--border-color);
+            box-shadow: 6px 6px 0px 0px var(--border-color);
+            overflow: hidden;
+        }
+
+        .room-image-mobile {
+            height: 200px;
+            border-bottom: 3px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .room-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid var(--border-color);
+            box-shadow: 2px 2px 0px 0px var(--border-color);
+        }
+
+        .room-content-mobile {
+            padding: 1.25rem;
+        }
+
+        .room-content-mobile h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .room-price-mobile {
+            display: inline-block;
+            background: var(--accent-pink);
+            padding: 0.5rem 1rem;
+            border: 2.5px solid var(--border-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0.75rem 0;
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+        }
+
+        .room-features-mobile {
+            list-style: none;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        .room-features-mobile li {
+            padding: 0.3rem 0;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .room-features-mobile li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+        }
+
+        .select-room-mobile {
+            width: 100%;
+            background: var(--border-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            border-top: 3px solid var(--border-color);
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .select-room-mobile:active {
+            background: var(--accent-cyan);
+            color: var(--border-color);
+        }
+
+        /* Booking Form Mobile */
+        .booking-mobile {
+            background: var(--accent-pink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-mobile::before {
+            content: "BOOK";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-20deg);
+            font-family: 'Syne', sans-serif;
+            font-size: 6rem;
+            font-weight: 800;
+            color: rgba(0,0,0,0.08);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .booking-form-mobile {
+            background: white;
+            border: 3px solid var(--border-color);
+            padding: 1.5rem;
+            box-shadow: 8px 8px 0px 0px var(--border-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group-mobile {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group-mobile label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .form-group-mobile input,
+        .form-group-mobile select {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2.5px solid var(--border-color);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 0;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .form-group-mobile input:focus,
+        .form-group-mobile select:focus {
+            outline: none;
+            background: white;
+            box-shadow: 3px 3px 0px 0px var(--border-color);
+        }
+
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .submit-btn-mobile {
+            width: 100%;
+            background: var(--accent-yellow);
+            border: 3px solid var(--border-color);
+            padding: 1.1rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            box-shadow: 5px 5px 0px 0px var(--border-color);
+            margin-top: 0.5rem;
+        }
+
+        .submit-btn-mobile:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0px 0px var(--border-color);
+        }
+
+        /* Receipt Mobile */
+        .receipt-mobile {
+            display: none;
+            background: white;
+            border: 2px dashed var(--border-color);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .receipt-header-mobile {
+            text-align: center;
+            border-bottom: 2px dashed var(--border-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .receipt-item-mobile {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.4rem 0;
+        }
+
+        .receipt-total-mobile {
+            border-top: 2px dashed var(--border-color);
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Mobile Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(70px + var(--safe-bottom));
+            background: white;
+            border-top: 3px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: var(--safe-bottom);
+            z-index: 1000;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+        }
+
+        .bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-decoration: none;
+            color: var(--border-color);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            gap: 4px;
+            border-right: 1px solid #eee;
+        }
+
+        .bottom-nav-item:last-child {
+            border-right: none;
+            background: var(--accent-yellow);
+            font-weight: 700;
+        }
+
+        .bottom-nav-item:active {
+            background: var(--secondary-bg);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Mobile Footer */
+        .footer-mobile {
+            background: var(--border-color);
+            color: white;
+            padding: 2rem 1rem;
+            padding-bottom: calc(100px + var(--safe-bottom));
+        }
+
+        .footer-section-mobile {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section-mobile h4 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            background: var(--accent-pink);
+            color: black;
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border: 2px solid white;
+        }
+
+        .footer-section-mobile a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .footer-bottom-mobile {
+            border-top: 2px solid white;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        /* Modal Mobile */
+        .modal-mobile {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content-mobile {
+            background: var(--accent-cyan);
+            border: 3px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 8px 8px 0px 0px white;
+            position: relative;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-close-mobile {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 36px;
+            height: 36px;
+            background: var(--accent-pink);
+            border: 2.5px solid var(--border-color);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 0px 0px var(--border-color);
+        }
+
+        .checkmark-mobile {
+            font-size: 3.5rem;
+            margin-bottom: 0.75rem;
+            animation: bounce 0.5s ease infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .modal-content-mobile h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        /* Utility */
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 1rem; }
+        
+        /* Hide scrollbar but keep functionality */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Header -->
+    <header class="mobile-header">
+        <div class="mobile-logo">KOKOON</div>
+        <div class="menu-toggle" onclick="toggleMenu()" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="#rooms" onclick="toggleMenu()">Rooms</a>
+        <a href="#features" onclick="toggleMenu()">Amenities</a>
+        <a href="#booking" onclick="toggleMenu()">Book Now</a>
+        <a href="#contact" onclick="toggleMenu()">Contact</a>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="mobile-hero">
+            <div class="hero-visual-mobile">
+                <div class="hero-image-mobile">🏨</div>
+                <div class="hero-badge-mobile">4-STAR<br>LUXURY</div>
+                <div class="price-tag-mobile">FROM $149</div>
+            </div>
+            
+            <div class="hero-content-mobile">
+                <h1>
+                    <span class="hero-word">Sleep</span>
+                    <span class="hero-word">Bold.</span>
+                    <span class="hero-word">Rest</span>
+                    <span class="hero-word">Loud.</span>
+                </h1>
+                <p class="hero-desc">Hotel Kokoon redefines the 4-star experience with brutalist comfort and unapologetic design. No fluff. Just unforgettable stays.</p>
+                <div class="hero-cta-mobile">
+                    <button class="cta-btn cta-primary" onclick="scrollToSection('booking')">Book Your Room</button>
+                    <button class="cta-btn cta-secondary" onclick="scrollToSection('features')">Explore Amenities</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section-mobile features-mobile" id="features">
+            <h2 class="section-title-mobile">Why Kokoon?</h2>
+            <div class="features-grid-mobile">
+                <div class="feature-card-mobile">
+                    <div class="feature-icon-mobile">🛏️</div>
+                    <h3>Brutalist Comfort</h3>
+                    <p>Beds so comfortable they should be illegal. High-thread-count linens meet industrial-chic aesthetics.</p>
+                </div>
+                <div class="feature-card-mobile">
+                    <div class="feature-icon-mobile">⚡</div>
+                    <h3>Lightning WiFi</h3>
+                    <p>Gigabit internet in every room. Stream, work, play—zero buffering, maximum brutalism.</p>
+                </div>
+                <div class="feature-card-mobile">
+                    <div class="feature-icon-mobile">🍳</div>
+                    <h3>Bold Breakfast</h3>
+                    <p>Farm-to-table morning feasts served with attitude. No continental fluff—just serious fuel.</p>
+                </div>
+                <div class="feature-card-mobile">
+                    <div class="feature-icon-mobile">🎨</div>
+                    <h3>Design Forward</h3>
+                    <p>Every corner is Instagram-ready. Concrete walls meet vibrant art in Neobrutalist celebration.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rooms Section -->
+        <section class="section-mobile rooms-mobile" id="rooms">
+            <h2 class="section-title-mobile">The Rooms</h2>
+            <div class="rooms-list-mobile">
+                <!-- Room 1 -->
+                <div class="room-card-mobile">
+                    <div class="room-image-mobile" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <span class="room-badge bg-yellow">Standard</span>
+                        🛏️
+                    </div>
+                    <div class="room-content-mobile">
+                        <h3>The Concrete Den</h3>
+                        <p>Compact but mighty. All essentials, zero clutter. Perfect for solo travelers.</p>
+                        <div class="room-price-mobile">$149/night</div>
+                        <ul class="room-features-mobile">
+                            <li>Queen bed with premium linens</li>
+                            <li>City view</li>
+                            <li>Work desk</li>
+                            <li>Rain shower</li>
+                        </ul>
+                    </div>
+                    <button class="select-room-mobile" onclick="selectRoom('Concrete Den', 149)">Select Room</button>
+                </div>
+
+                <!-- Room 2 -->
+                <div class="room-card-mobile">
+                    <div class="room-image-mobile" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <span class="room-badge bg-pink">Popular</span>
+                        🛋️
+                    </div>
+                    <div class="room-content-mobile">
+                        <h3>The Brutalist Suite</h3>
+                        <p>Spacious living with separated sleeping area. Concrete aesthetics meet plush comfort.</p>
+                        <div class="room-price-mobile">$249/night</div>
+                        <ul class="room-features-mobile">
+                            <li>King bed + Sofa bed</li>
+                            <li>Panoramic view</li>
+                            <li>Living area</li>
+                            <li>Soaking tub</li>
+                        </ul>
+                    </div>
+                    <button class="select-room-mobile" onclick="selectRoom('Brutalist Suite', 249)">Select Room</button>
+                </div>
+
+                <!-- Room 3 -->
+                <div class="room-card-mobile">
+                    <div class="room-image-mobile" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                        <span class="room-badge bg-cyan">Luxury</span>
+                        👑
+                    </div>
+                    <div class="room-content-mobile">
+                        <h3>The Penthouse</h3>
+                        <p>Top floor dominance. Private terrace, skyline views, and amenities that spoil.</p>
+                        <div class="room-price-mobile">$499/night</div>
+                        <ul class="room-features-mobile">
+                            <li>California King bed</li>
+                            <li>360° city views</li>
+                            <li>Private terrace</li>
+                            <li>Butler service</li>
+                        </ul>
+                    </div>
+                    <button class="select-room-mobile" onclick="selectRoom('Penthouse', 499)">Select Room</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section class="section-mobile booking-mobile" id="booking">
+            <h2 class="section-title-mobile text-center" style="display: block; transform: rotate(1deg);">Book Now</h2>
+            <div class="booking-form-mobile">
+                <form id="bookingFormMobile" onsubmit="handleBooking(event)">
+                    <div class="form-group-mobile">
+                        <label>Full Name</label>
+                        <input type="text" id="fullName" required placeholder="John Doe">
+                    </div>
+                    
+                    <div class="date-row">
+                        <div class="form-group-mobile">
+                            <label>Check In</label>
+                            <input type="date" id="checkIn" required>
+                        </div>
+                        <div class="form-group-mobile">
+                            <label>Check Out</label>
+                            <input type="date" id="checkOut" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group-mobile">
+                        <label>Selected Room</label>
+                        <select id="roomSelect" onchange="updateTotal()">
+                            <option value="149">The Concrete Den - $149/night</option>
+                            <option value="249" selected>The Brutalist Suite - $249/night</option>
+                            <option value="499">The Penthouse - $499/night</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-mobile">
+                        <label>Requests (Optional)</label>
+                        <input type="text" placeholder="Late check-in, extra pillows...">
+                    </div>
+
+                    <button type="submit" class="submit-btn-mobile">Confirm Booking</button>
+
+                    <!-- Mobile Receipt -->
+                    <div id="receiptMobile" class="receipt-mobile">
+                        <div class="receipt-header-mobile">
+                            <h3>HOTEL KOKOON</h3>
+                            <p id="receiptDate"></p>
+                        </div>
+                        <div class="receipt-item-mobile">
+                            <span>Guest:</span>
+                            <span id="receiptGuest"></span>
+                        </div>
+                        <div class="receipt-item-mobile">
+                            <span>Room:</span>
+                            <span id="receiptRoom"></span>
+                        </div>
+                        <div class="receipt-item-mobile">
+                            <span>Nights:</span>
+                            <span id="receiptNights"></span>
+                        </div>
+                        <div class="receipt-item-mobile">
+                            <span>Rate:</span>
+                            <span id="receiptRate"></span>
+                        </div>
+                        <div class="receipt-total-mobile">
+                            <span>TOTAL:</span>
+                            <span id="receiptTotal"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer-mobile" id="contact">
+            <div class="footer-section-mobile">
+                <h4>Location</h4>
+                <p style="line-height: 1.6; font-size: 0.95rem;">
+                    123 Brutalist Boulevard<br>
+                    Design District, NY 10001<br>
+                    <a href="tel:+1234567890" style="border: none; margin-top: 0.5rem; display: inline-block; background: var(--accent-yellow); color: black; padding: 0.5rem 1rem; border: 2px solid white;">Call Now</a>
+                </p>
+            </div>
+            
+            <div class="footer-section-mobile">
+                <h4>Links</h4>
+                <a href="#rooms">Rooms & Suites</a>
+                <a href="#features">Amenities</a>
+                <a href="#booking">Reservations</a>
+                <a href="#">Gift Cards</a>
+            </div>
+
+            <div class="footer-bottom-mobile">
+                <p>© 2026 Hotel Kokoon</p>
+                <p style="margin-top: 0.5rem; opacity: 0.8;">Bold Comfort for Mobile</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Fixed Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#features" class="bottom-nav-item">
+            <span class="nav-icon">✨</span>
+            <span>Amenities</span>
+        </a>
+        <a href="#rooms" class="bottom-nav-item">
+            <span class="nav-icon">🛏️</span>
+            <span>Rooms</span>
+        </a>
+        <a href="#booking" class="bottom-nav-item" style="background: var(--accent-yellow);">
+            <span class="nav-icon">📅</span>
+            <span>Book</span>
+        </a>
+    </nav>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-mobile" onclick="closeModal(event)">
+        <div class="modal-content-mobile" onclick="event.stopPropagation()">
+            <button class="modal-close-mobile" onclick="closeModal()">×</button>
+            <div class="checkmark-mobile">✓</div>
+            <h2>Booked!</h2>
+            <p style="font-size: 1rem; margin-bottom: 1rem; line-height: 1.4;">Welcome to the Kokoon experience. Check your email for confirmation.</p>
+            <button class="cta-btn cta-primary" onclick="closeModal()" style="box-shadow: 4px 4px 0px 0px white;">Awesome</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dates
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkIn').min = today;
+        document.getElementById('checkOut').min = today;
+        document.getElementById('checkIn').value = today;
+        
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('checkOut').value = tomorrow.toISOString().split('T')[0];
+
+        // Update checkout min when checkin changes
+        document.getElementById('checkIn').addEventListener('change', function() {
+            const checkIn = new Date(this.value);
+            const nextDay = new Date(checkIn);
+            nextDay.setDate(nextDay.getDate() + 1);
+            document.getElementById('checkOut').min = nextDay.toISOString().split('T')[0];
+            if (new Date(document.getElementById('checkOut').value) <= checkIn) {
+                document.getElementById('checkOut').value = nextDay.toISOString().split('T')[0];
+            }
+            updateTotal();
+        });
+
+        document.getElementById('checkOut').addEventListener('change', updateTotal);
+
+        function toggleMenu() {
+            const nav = document.getElementById('mobileNav');
+            const toggle = document.getElementById('menuToggle');
+            nav.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function selectRoom(roomName, price) {
+            const select = document.getElementById('roomSelect');
+            select.value = price;
+            scrollToSection('booking');
+            // Haptic feedback if available
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
+
+        function calculateNights() {
+            const checkIn = new Date(document.getElementById('checkIn').value);
+            const checkOut = new Date(document.getElementById('checkOut').value);
+            const diff = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            return diff > 0 ? diff : 1;
+        }
+
+        function updateTotal() {
+            // Real-time calculation could be displayed here
+        }
+
+        function handleBooking(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('fullName').value;
+            const roomSelect = document.getElementById('roomSelect');
+            const roomText = roomSelect.options[roomSelect.selectedIndex].text;
+            const roomPrice = parseInt(roomSelect.value);
+            const nights = calculateNights();
+            const total = roomPrice * nights;
+            
+            // Populate receipt
+            document.getElementById('receiptGuest').textContent = name;
+            document.getElementById('receiptRoom').textContent = roomText.split(' - ')[0];
+            document.getElementById('receiptNights').textContent = nights;
+            document.getElementById('receiptRate').textContent = '$' + roomPrice + '/night';
+            document.getElementById('receiptTotal').textContent = '$' + total;
+            document.getElementById('receiptDate').textContent = new Date().toLocaleDateString();
+            
+            // Show receipt
+            document.getElementById('receiptMobile').style.display = 'block';
+            
+            // Haptic success
+            if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+            
+            // Show modal after delay
+            setTimeout(() => {
+                document.getElementById('successModal').style.display = 'flex';
+            }, 600);
+        }
+
+        function closeModal(e) {
+            if (!e || e.target.id === 'successModal') {
+                document.getElementById('successModal').style.display = 'none';
+            }
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const nav = document.getElementById('mobileNav');
+            const toggle = document.getElementById('menuToggle');
+            if (!toggle.contains(e.target) && !nav.contains(e.target) && nav.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
